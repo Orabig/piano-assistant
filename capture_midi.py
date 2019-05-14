@@ -13,21 +13,6 @@ def eprint(*args, **kwargs):
 import serial
 import time
 
-# ------------------------------------------------------------
-
-# Manage a set of pushed notes
-
-notes = set()
-
-def detect_note(note, velocity):
-  if velocity == 0:
-    notes.discard(note)
-  else:
-    notes.add(note)
-  guess_chord(notes)
-
-# ------------------------------------------------------------
-
 ser = serial.Serial('/dev/ttyAMA0', baudrate=31250, timeout=0.050)    
 
 message = [0, 0, 0]
