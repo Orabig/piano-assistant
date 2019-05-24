@@ -33,11 +33,17 @@ while True:
   note = message[1] if len(message) > 1 else None
   velocity = message[2] if len(message) > 2 else None
 
-  if messagetype == 9:    # Note on
-    eprint("Note on : ch:%d note=%d  v=%d" % (messagechannel, note, velocity)) # ATTENTION, Ecrit sur STDOUT ?
-    ts = time.time()
-    print("%.2f %d %d" % (ts, note, velocity))
-    sys.stdout.flush()
+  message[0] = messagechannel
+
+  ts = time.time()
+  print("MID %.2f %d %s" % (ts, messagetype , ' '.join(map(str, message))))
+  sys.stdout.flush()
+
+#  if messagetype == 9:    # Note on
+#    eprint("Note on : ch:%d note=%d  v=%d" % (messagechannel, note, velocity)) # ATTENTION, Ecrit sur STDOUT ?
+#    ts = time.time()
+#    print("%.2f %d %d" % (ts, note, velocity))
+#    sys.stdout.flush()
 #  elif messagetype == 8:  # Note off
 #    print 'Note off'            
 #  elif messagetype == 12: # Program change

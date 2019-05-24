@@ -22,7 +22,7 @@ eprint("--------> Starting replay");
 offset = 0
 
 for line in sys.stdin:
-  timestamp, note, velocity = line.split()
+  timestamp, event, msg1, msg2, msg3 = line.split()
   timestamp=float(timestamp)
   
   now = time.time()
@@ -33,5 +33,5 @@ for line in sys.stdin:
   while now < offset+timestamp:
     now = time.time()
 
-  print("%.2f %s %s" % (timestamp+offset,note,velocity))
+  print("%.2f %s %s %s %s" % (timestamp+offset, event, msg1, msg2, msg3))
 

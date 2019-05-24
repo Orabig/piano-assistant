@@ -82,7 +82,7 @@ def guess_chord(ts, notes):
   if name!='':
     if color=='MAJOR':
 	  name="%s%s%s"%(alt,sus,bass)
-    print("%s%s%s"%(tonal,tone,name))
+    print("CHD %s %s%s%s"%(ts,tonal,tone,name))
     sys.stdout.flush()
 
 # ------------------------------------------------------------
@@ -91,5 +91,8 @@ def guess_chord(ts, notes):
 for line in iter(sys.stdin.readline, b''):
   line = line.strip() # Dangerous : may loose spaces at the end of the line
   notes = line.split()
+  stream = notes.pop(0)
+  if stream != 'NOT':
+    continue
   ts = notes.pop(0)
   guess_chord(ts, map(int, notes))

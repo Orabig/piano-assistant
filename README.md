@@ -44,3 +44,13 @@ A MIDI input interface should be plugged on the RX GPIO pin
 Just do `./run.sh`
 
 At this time, it will just "listen" to what is played on the piano/midi instrument, try to guess what chords are played and display them.
+
+# Protocols
+
+Redis serves as a data bus, that handles streams of events between micro-components.
+
+TODO : each stream should be prefixed by a trigram and a timestamp
+
+NOT 123456.1 ...
+CHD 123456.2 ...
+...

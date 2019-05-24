@@ -22,10 +22,14 @@ notes = set()
 # This sucks... This is python
 for line in iter(sys.stdin.readline, b''):
   line = line.strip() # Dangerous : may loose spaces at the end of the line
-  (ts, note, velocity) = line.split()
+  (stream, ts, midi_event, channel, note, velocity) = line.split()
+  if stream != 'MID':
+    continue
+  if midi_event != "9":
+    continue
   if velocity == "0":
     notes.discard(note)
   else:
     notes.add(note)
-  print( "%s %s" % (ts, ' '.join(notes)) )
+  print( "NOT %s %s" % (ts, ' '.join(notes)) )
   sys.stdout.flush()
