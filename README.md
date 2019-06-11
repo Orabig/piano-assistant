@@ -62,7 +62,7 @@ It is possible to "simulate" a piano (for example if you don't have the hardware
 
 `./loop_midi_replay.sh streams/<file>` playbacks the midi events in the replay file. (the events are played at the exact same pace than the original performance)
 
-`./song.pl` is a work-in-progress draft to have some way to encode/decode a piano score, and to display it in a clear and compact way. For now, there is only one song hardcoded.
+`./song.pl < scores/my_song.song` is a work-in-progress draft to have some way to encode/decode a piano score, and to display it in a clear and compact way. For now, there is only one song hardcoded.
 In the future it would be cool to be able to :
 - Translate scores from internet sources (from guitar-pro files for example, or from raw-text resources)
 - Directly enter and edit scores by using the piano keyboard and MIDI interface

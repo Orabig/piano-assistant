@@ -5,10 +5,14 @@ $|=1;
 use strict;
 use Data::Dumper;
 
-sub get_term_width {
-	return `tput cols`;
+my %parts;
+
+sub uniq {
+  my %a;
+  map$a{$_}++,@_;
+  keys%a;
 }
-my $SCREEN_WIDTH = get_term_width();
+
 
 sub readSong {
 	my $song = {};
@@ -38,7 +42,7 @@ sub readSong {
 # Dim 1 : measure groups (generally containing 4 measures) 
 # Dim 2 : measure (generally 4 beats)
 # Dim 3 : Chords (struct containing name + length in quarters) eg. {c=>"Bm7",b=>"16"}
-sub get_tabs {
+sub decode_tabs {
 	my ($song,$part) = @_;
 	my $rythm = $song->{R};
 	$rythm=~m!(\d+)/(\d+)! or die "Incorrect rythm : $rythm";
@@ -143,84 +147,38 @@ sub get_measures_string {
 }
 
 
-sub print_tabs {
-	my ($t)=@_;
+sub get_score_strings {
+	my ($t,$width)=@_;
 	my @lines;
-	my $cells = 0+@{$t->[0]};
-	foreach my $group (@$t) {
-		push @lines, get_measures_string(undef,$cells,$SCREEN_WIDTH,@lines ? 2:0);
-		push @lines, get_measures_string($group,$cells,$SCREEN_WIDTH,1);
+	my $cells = 0+@{$parts{$t}->[0]};
+	foreach my $group (@{$parts{$t}}) {
+		push @lines, get_measures_string(undef,$cells,$width,@lines ? 2:0);
+		push @lines, get_measures_string($group,$cells,$width,1);
 	}
-	push @lines, get_measures_string(undef,$cells,$SCREEN_WIDTH,3);
-	print join "\n", @lines;
+	push @lines, get_measures_string(undef,$cells,$width,3);
+	return @lines;
+}
+
+
+sub get_term_width {
+	return `tput cols`;
 }
 
 my @input;
-push @input,$_ while <DATA>;
+push @input,$_ while <>;
 my $song = readSong(@input);
+my @structure = split ',', $song->{S}; # A,B,A,B,V,A,V,B...
+my @parts = uniq(@structure);
+map {
+	$parts{$_} = decode_tabs($song,$_);
+} @parts;
 
-my $A = get_tabs($song,'A');
-my $B = get_tabs($song,'T');
-my $C = get_tabs($song,'C');
 
-print "A:";
-print_tabs($A);
-print "B:";
-print_tabs($B);
-print "C:";
-print_tabs($C);
+my $SCREEN_WIDTH = get_term_width();
 
-__DATA__
-T:Le coeur grenadine
-A:Laurent Voulzy
-I:G
-R:4/4 ; Chaque mesure est en 4/4
-B:4 ; Afficher les mesures par 4 (sauf si indiqué autrement)
-S:A,A,T,C,A,A,T,C
-
->_A_
-G
-l:J'ai laissé dans une mandarine
-Bm7
-C7M
-/2/Am7
-l:Une coquille de noix bleue marine
-/2/D
-G
-Bm7
-C7M
-/2/Am7
-/2/D
-G
-F#7
-Am7
-/2/Esus4
-/2/E7
-C
-G/B
-Am7
-D
-<_A_
-
->_T_
-D
-<_T_
-
->_C_
-G
-Bm7
-/3/C
-/1/C7M
-/2/Am
-/2/D : ; Repeter 2 fois depuis début du PART
-
-Am
-B7
-/2/Em
-/2/D
-G
-/8/C7M
-/8/Bm7
-/8/Am7
-/8/D7
-<_C_
+my %seen; # Mark the parts already displayed
+foreach (@structure) {
+	next if $seen{$_}++;
+	print;
+	print join "\n", get_score_strings($_,$SCREEN_WIDTH);
+}
