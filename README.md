@@ -12,6 +12,8 @@ The raspberry uses a ad-hoc hardware electronic device to receive and read MIDI 
 Eventually, this project could remove the need of an hardware part if the MIDI is not necessary (the software could then be controlled by a keyboard or simple buttons), for example to be used by guitar players.
 However, I'm not a good guitarist, thus this is not my main goal.
 
+![image](https://cdn.discordapp.com/attachments/397139717650513921/587754700602998805/jOu4MHlH0hePs_m9KY9_9qSonuESHEyZfbY5RsNqoKaJewHBfqRFp5LNBdItDtIl3x1TNA5T-wVAQ_kYtzd6fusgUZuGBKHywECD.png)
+
 ## How to run the software
 
 Just do `sudo ./run.sh`
