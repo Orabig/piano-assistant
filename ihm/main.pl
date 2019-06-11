@@ -26,7 +26,8 @@ frame_draw( $chords );
 while(<>) {
 	# Assume that all entries are like 'MID 1560067804.76 9 1 69 65'
 	next unless /^(\w+) ([\d\.]+) (.*)/;
-	frame_print($output_frame{$1},$3);
+	my $frame = $output_frame{$1};
+	frame_print($frame,$3) if $frame;
 }
 
 
