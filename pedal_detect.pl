@@ -22,7 +22,9 @@ while (<>) {
   my ($stream, $ts) = ($1,$2);
   $_ = $';
 
-  # TODO TODO TODO TODO TODO TODO TODO  Corriger : ce script peut ne lire que MID et prendre les notes sur un 9
+  # TODO : Corriger : pour le moment ce script s'appuie sur le flux NOT pour savoir si une touche est
+  #        enfoncée ou non.
+  # Il serait possible de lire seulement le flux MID et prendre les notes sur un 8/9 (note off/on)
   $notes_pressed = /\d/ if ($stream eq 'NOT');
 
   # Do not listen to midi events if there are pressed notes

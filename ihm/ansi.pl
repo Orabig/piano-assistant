@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+
 $|=1;
 # ANSI definitions
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Example_of_use_in_shell_scripting
@@ -61,7 +62,13 @@ sub frame_line {
 	my $content = $me->{-content};
 	my $w = $me->{-w};
 	my $line=$content->[$pos-1];
-	my $len = length $line;
+	
+	# This is meant to know the REAL size of the string which is not handled as utf8 by Perl
+	use Encode;
+	Encode::_utf8_on($line);
+	my $len = length($line);
+	Encode::_utf8_off($line);
+	
 	$line .= ' ' x ($w-$len);
 }
 
@@ -101,12 +108,13 @@ sub frame_print {
 	push @{$me->{-content}}, $text;
 	my $h = $me->{-h};
 	splice @{$me->{-content}},0,-$h;
-	frame_draw($me);
+	frame_draw($me); # TODO : do NOT draw after each call... Set a background forked process ?
 }
 
 sub frame_title {
 	my ($me, $text) = @_;
 	$me->{ -title } = $text;
+	frame_draw( $me );
 }
 
 sub new_frame {
@@ -126,6 +134,7 @@ sub frame_full {
 sub get_per {
   my ($value, $per)=@_;
   return int($value * $1 / 100) if $per=~/(.*)%/;
+  return $value+$per if $per<0;
   return $per;
 }
 # Splits a frame horizontally and creates a new one
@@ -145,7 +154,7 @@ sub frame_split_h {
 # Splits a frame vertically and creates a new one
 sub frame_split_v {
 	my ($oldf, $per) = @_;
-	my ($x,$y,$w,$oldh) = @$oldf{qw!-x -y -w -h!};
+	my ($x,$y,$w,$oldh) = @$oldf{qw!-x -y -w -h!};	
 	my $h1 = get_per($oldh, $per); # New height for $oldf
 	$oldf->{-h}=$h1;
 	frame_draw($oldf);

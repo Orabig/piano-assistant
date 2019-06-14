@@ -179,6 +179,6 @@ my $SCREEN_WIDTH = get_term_width();
 my %seen; # Mark the parts already displayed
 foreach (@structure) {
 	next if $seen{$_}++;
-	print;
-	print join "\n", get_score_strings($_,$SCREEN_WIDTH);
+	print "TAB 0.0 ...";
+	print join "\n", map "TAB 0.0 $_", get_score_strings($_,$SCREEN_WIDTH);
 }
