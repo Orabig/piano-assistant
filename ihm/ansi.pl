@@ -40,6 +40,7 @@ sub ansi_fg {
    ansi_set("38;5;$x");
 }
 
+# TODO : check : c'est uselesss ????
 sub frame_draw {
 	my ($x,$y,$w,$h) = @_;
 	ansi_cursor_pos($x,$y);
@@ -103,12 +104,17 @@ sub frame_draw {
 	$|=1;
 }
 
-sub frame_print {
+sub frame_print_no_draw {
 	my ($me, $text) = @_;
 	push @{$me->{-content}}, $text;
 	my $h = $me->{-h};
 	splice @{$me->{-content}},0,-$h;
-	frame_draw($me); # TODO : do NOT draw after each call... Set a background forked process ?
+}
+
+sub frame_print {
+	my ($me, $text) = @_;
+	frame_print_no_draw(@_);
+	frame_draw( $me );
 }
 
 sub frame_title {
@@ -117,10 +123,15 @@ sub frame_title {
 	frame_draw( $me );
 }
 
+sub frame_clear {
+	my ($me) = @_;
+	$me->{-content}=[];
+}
+
 sub new_frame {
   my $me = {};
   @$me{ qw!-x -y -w -h! } = @_;
-  $me->{-content}=[];
+  frame_clear($me);
   return $me;
 }
 

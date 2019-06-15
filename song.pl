@@ -131,18 +131,25 @@ my @GRID_BLOCKS = qw!
 # t : type of line : 0=top, 1=name of the chord, 2=middle, 3=bottom
 sub get_measures_string {
 	my ($m,$num_cell,$w,$t)=@_;
+	#print STDERR "DEBUG:: get_measures_string($m,$num_cell,$w,$t)";
 	my $size=int(($w - 4 - ($num_cell-1)*3) / $num_cell);
 	$_=$GRID_BLOCKS[3*$t];
 	foreach my $idx (0..$num_cell-1) {
 		my $measure = $m->[$idx];
 		if ($t == 1) {
-			$_.= ' ' . get_measure_string($measure,$size) . ' ';
+			if ($measure) {
+				$_.= ' ' . get_measure_string($measure,$size) . ' ';
+			} else {
+				# measure can be undef in case of unfinished score
+				$_.= ' ' x ($size+2);
+			}
 		} else {
 			$_.= '─' x ($size+2);
 		}		
 		$_.= $GRID_BLOCKS[3*$t+1] if $idx<$num_cell-1;
 	}
 	$_.= $GRID_BLOCKS[3*$t+2];
+	#print STDERR "DEBUG::returned:\n$_";
 	return $_;
 }
 
@@ -150,6 +157,7 @@ sub get_measures_string {
 sub get_score_strings {
 	my ($t,$width)=@_;
 	my @lines;
+	return () unless $parts{$t}->[0];
 	my $cells = 0+@{$parts{$t}->[0]};
 	foreach my $group (@{$parts{$t}}) {
 		push @lines, get_measures_string(undef,$cells,$width,@lines ? 2:0);
@@ -161,7 +169,7 @@ sub get_score_strings {
 
 
 sub get_term_width {
-	return `tput cols`;
+	return 0+`tput cols`;
 }
 
 my @input;
@@ -179,6 +187,6 @@ my $SCREEN_WIDTH = get_term_width();
 my %seen; # Mark the parts already displayed
 foreach (@structure) {
 	next if $seen{$_}++;
-	print "TAB 0.0 ...";
+	print "TAB 0.0 ";
 	print join "\n", map "TAB 0.0 $_", get_score_strings($_,$SCREEN_WIDTH);
 }

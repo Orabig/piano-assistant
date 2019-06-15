@@ -20,6 +20,8 @@ my $SONG_DIR = './scores';
 open CONTROL, "-|", "rp read control";
 open IHM, "|-", "rp write ihm";
 select IHM; $|=1;
+open CMD, "|-", "rp write command";
+select CMD; $|=1;
 
 my @state_stack;
 
@@ -34,12 +36,22 @@ push @state_stack, $main_menu;
 
 sub GO_RECORD {
 	unshift @state_stack, $record_menu;
+	my $edited_song = 'Song_000';
+	my $now = time;
+	print CMD "CMD $now RECORD START $edited_song";
 	$choice=0;
 }
+
 sub GO_LOAD {
 	unshift @state_stack, $load_menu;
 	$choice=0;
 }
+
+sub refresh_song {
+	my $songfile = qx!cat in_edit!;
+	print STDERR qx!./do_load_song.sh $songfile!
+}
+
 sub DO_LOAD {
 	my $song = getMenuItemText(@_[0]);
 	my $songfile = "$SONG_DIR/$song.song";
@@ -102,12 +114,17 @@ sub printState {
 }
 
 printState();
+refresh_song();
 
 #
 # Main control loop
 #
 while (<CONTROL>) {	
-	next unless /^CTL \S+ (.)/; $_=$1;
+	next unless /^CTL \S+ (.*)/; $_=$1;
+	if (/REFRESH SONG/) {
+		refresh_song();
+		next;
+	}
 	my $top_menu = $state_stack[0];
 	my @entries = getCurrentMenuItems();
 	if (/$KEY_LEFT/) {
