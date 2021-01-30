@@ -36,7 +36,12 @@ push @state_stack, $main_menu;
 
 sub GO_RECORD {
 	unshift @state_stack, $record_menu;
-	my $edited_song = 'Song_000';
+	my $edited_song='Song_0';
+	my $idx = 0;
+	while (-f "scores/$edited_song.song") {
+		$idx++;
+		$edited_song="Song_$idx";
+	}
 	my $now = time;
 	print CMD "CMD $now RECORD START $edited_song";
 	$choice=0;
@@ -59,7 +64,12 @@ sub DO_LOAD {
 }
 
 sub BACK {
-	shift @state_stack if (@state_stack>1);
+	return unless @state_stack>1;
+	my $previous = shift @state_stack;
+	if ($previous == $record_menu) {
+		my $now = time;
+		print CMD "CMD $now RECORD STOP";
+	}
 }
 
 my $actions =

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding: utf-8
 # ------------------------------------------------------------
 # This ugly thing is just to be able to print to stderr
 
@@ -61,13 +62,13 @@ def guess_chord(ts, notes):
   elif (offsets == set([5,7])):
 	sus='sus4'
   elif (offsets == set([4,7,11])):
-	alt='maj7'
+	alt='M7'
   elif (offsets == set([2,7,11])):
 	bass='/4'
   elif (offsets == set([4,6])):
 	sus='5-'
   elif (offsets == set([3,6,9])):
-	color='dim'
+	color='ø'
   elif (offsets == set([3,6])):
         color='m'
 	sus='5-'
