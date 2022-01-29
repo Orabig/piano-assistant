@@ -11,3 +11,4 @@ cd /home/pi/DEV/piano-assistant/
 git pull
 ./run_midi_interface.sh &
 ./run_connect.sh &
+./run_controller.sh &
